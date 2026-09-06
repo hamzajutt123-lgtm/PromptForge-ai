@@ -4006,5 +4006,71 @@ render();
 
 </script>
 
+ <section class="ai-generator" id="generator">
+
+  <div class="generator-head">
+    <div class="generator-badge">✦ AI IMAGE GENERATOR</div>
+    <h2>Create Your AI Photo</h2>
+    <p>Upload your photo, write a prompt and transform your image with AI.</p>
+  </div>
+
+  <div class="generator-grid">
+
+    <div class="generator-card">
+      <label class="upload-area" id="uploadArea">
+        <input type="file" id="imageInput"
+          accept="image/png,image/jpeg,image/webp" hidden>
+
+        <div id="uploadContent">
+          <div class="upload-icon">📸</div>
+          <strong>Upload Your Photo</strong>
+          <span>PNG, JPG or WEBP</span>
+        </div>
+
+        <img id="previewImage" class="preview-image"
+          style="display:none;">
+      </label>
+    </div>
+
+    <div class="generator-card">
+
+      <label class="generator-label">Your Prompt</label>
+
+      <textarea id="aiPrompt"
+        placeholder="Example: Transform my photo into a cinematic portrait..."></textarea>
+
+      <div class="prompt-examples">
+        <button onclick="setExample('cinematic')">🎬 Cinematic</button>
+        <button onclick="setExample('anime')">🎌 Anime</button>
+        <button onclick="setExample('fashion')">👗 Fashion</button>
+        <button onclick="setExample('luxury')">👑 Luxury</button>
+      </div>
+
+      <button class="generate-btn"
+        id="generateBtn"
+        onclick="generateAIImage()">
+        ✨ Generate AI Image
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="generator-result" id="generatorResult"
+    style="display:none;">
+
+    <div class="result-title">✨ Your AI Image</div>
+
+    <img id="generatedImage" alt="Generated AI image">
+
+    <a id="downloadAI"
+      class="download-ai"
+      download="promptforge-ai.png">
+      ⬇ Download Image
+    </a>
+
+  </div>
+
+ </section>
 </body>
 </html>
