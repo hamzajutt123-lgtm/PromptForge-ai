@@ -1,0 +1,4336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>PromptForge AI — AI Photo Prompt Library</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#060609;
+    --bg2:#0b0b11;
+    --card:#111119;
+    --card2:#171720;
+    --text:#fff;
+    --muted:#9898aa;
+    --line:rgba(255,255,255,.09);
+    --purple:#7657ff;
+    --purple2:#a05cff;
+    --pink:#ed62c7;
+    --green:#35e5a0;
+    --danger:#ff6685;
+}
+
+body.light{
+    --bg:#f5f5f8;
+    --bg2:#ffffff;
+    --card:#ffffff;
+    --card2:#f0f0f5;
+    --text:#111118;
+    --muted:#666676;
+    --line:rgba(0,0,0,.09);
+}
+
+body{
+    background:
+    radial-gradient(
+        circle at 10% -10%,
+        rgba(118,87,255,.22),
+        transparent 30%
+    ),
+    radial-gradient(
+        circle at 90% 0%,
+        rgba(237,98,199,.15),
+        transparent 28%
+    ),
+    var(--bg);
+
+    color:var(--text);
+    font-family:Inter,Arial,sans-serif;
+    min-height:100vh;
+    transition:.3s;
+}
+
+button,input,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+/* =========================
+NAVBAR
+========================= */
+
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:3000;
+
+    border-bottom:1px solid var(--line);
+
+    background:rgba(6,6,9,.75);
+    backdrop-filter:blur(25px);
+}
+
+.light .navbar{
+    background:rgba(245,245,248,.8);
+}
+
+.nav{
+    max-width:1400px;
+    min-height:74px;
+    margin:auto;
+    padding:0 22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:11px;
+
+    font-size:20px;
+    font-weight:900;
+}
+
+.logo-icon{
+    width:41px;
+    height:41px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:13px;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+
+    box-shadow:
+    0 10px 35px rgba(118,87,255,.35);
+}
+
+.nav-center{
+    display:flex;
+    align-items:center;
+    gap:28px;
+}
+
+.nav-link{
+    color:var(--muted);
+    font-size:13px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.nav-link:hover{
+    color:var(--text);
+}
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+
+    border:1px solid var(--line);
+    border-radius:13px;
+
+    color:var(--text);
+    background:var(--card);
+
+    transition:.2s;
+}
+
+.icon-btn:hover{
+    transform:translateY(-2px);
+    border-color:#7657ff77;
+}
+
+.login-btn{
+    height:42px;
+    padding:0 17px;
+
+    border:0;
+    border-radius:12px;
+
+    color:#fff;
+    font-size:12px;
+    font-weight:850;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+}
+
+.user-menu{
+    display:none;
+}
+
+.avatar{
+    width:38px;
+    height:38px;
+
+    display:grid;
+    place-items:center;
+
+    border:2px solid #7657ff88;
+    border-radius:50%;
+
+    color:white;
+    font-weight:900;
+
+    background:
+    linear-gradient(
+        135deg,
+        #7657ff,
+        #ed62c7
+    );
+}
+
+.mobile-menu{
+    display:none;
+}
+
+/* =========================
+HERO
+========================= */
+
+.hero{
+    max-width:1250px;
+    margin:auto;
+    padding:80px 20px 65px;
+    text-align:center;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:9px 15px;
+
+    border:1px solid #7657ff55;
+    border-radius:50px;
+
+    color:#c3b7ff;
+    background:#7657ff10;
+
+    font-size:11px;
+    font-weight:850;
+}
+
+.dot{
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:var(--green);
+    box-shadow:0 0 12px var(--green);
+}
+
+.hero h1{
+    max-width:1000px;
+    margin:22px auto 0;
+
+    font-size:clamp(
+        45px,
+        7vw,
+        86px
+    );
+
+    line-height:.96;
+
+    letter-spacing:-5px;
+}
+
+.gradient{
+    background:
+    linear-gradient(
+        90deg,
+        #8168ff,
+        #b45fff,
+        #ef65c3
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+
+    color:transparent;
+}
+
+.hero p{
+    max-width:700px;
+    margin:25px auto;
+
+    color:var(--muted);
+
+    font-size:16px;
+    line-height:1.7;
+}
+
+/* =========================
+SEARCH
+========================= */
+
+.search-area{
+    max-width:850px;
+    margin:32px auto 0;
+}
+
+.search-box{
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:7px;
+
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:22px;
+
+    background:rgba(20,20,29,.9);
+
+    box-shadow:
+    0 25px 70px rgba(0,0,0,.3);
+}
+
+.light .search-box{
+    background:#fff;
+}
+
+.search-icon{
+    width:48px;
+
+    display:grid;
+    place-items:center;
+
+    color:var(--muted);
+    font-size:23px;
+}
+
+.search-box input{
+    flex:1;
+
+    height:100%;
+
+    border:0;
+    outline:0;
+
+    color:var(--text);
+    background:transparent;
+
+    font-size:16px;
+}
+
+.search-box input::placeholder{
+    color:#747486;
+}
+
+.shortcut{
+    min-width:34px;
+    height:30px;
+
+    display:grid;
+    place-items:center;
+
+    border:1px solid var(--line);
+    border-radius:8px;
+
+    color:var(--muted);
+    font-size:12px;
+}
+
+.search-btn{
+    height:56px;
+    padding:0 25px;
+
+    border:0;
+    border-radius:16px;
+
+    color:#fff;
+    font-weight:850;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+
+    transition:.2s;
+}
+
+.search-btn:hover{
+    transform:translateY(-1px);
+}
+
+/* =========================
+STATS
+========================= */
+
+.stats{
+    margin-top:35px;
+
+    display:flex;
+    justify-content:center;
+    gap:70px;
+    flex-wrap:wrap;
+}
+
+.stat strong{
+    display:block;
+
+    font-size:27px;
+}
+
+.stat span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* =========================
+SECTION
+========================= */
+
+.container{
+    max-width:1400px;
+    margin:auto;
+
+    padding:10px 22px 90px;
+}
+
+.section-title{
+    margin-bottom:18px;
+}
+
+.section-title h2{
+    font-size:28px;
+    letter-spacing:-1px;
+}
+
+.section-title p{
+    margin-top:5px;
+
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* =========================
+CATEGORY
+========================= */
+
+.categories{
+    display:flex;
+    gap:9px;
+
+    overflow-x:auto;
+
+    padding:4px 2px 15px;
+
+    scrollbar-width:none;
+}
+
+.categories::-webkit-scrollbar{
+    display:none;
+}
+
+.category{
+    flex:0 0 auto;
+
+    padding:11px 16px;
+
+    border:1px solid var(--line);
+    border-radius:50px;
+
+    color:var(--muted);
+    background:var(--card);
+
+    font-size:12px;
+    font-weight:800;
+
+    transition:.2s;
+}
+
+.category:hover{
+    transform:translateY(-2px);
+    border-color:#7657ff77;
+}
+
+.category.active{
+    color:white;
+    border-color:transparent;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+
+    box-shadow:0 8px 25px #7657ff30;
+}
+
+/* =========================
+FEATURED
+========================= */
+
+.featured{
+    margin:18px 0 32px;
+
+    padding:28px;
+
+    border:1px solid var(--line);
+    border-radius:24px;
+
+    background:
+    linear-gradient(
+        110deg,
+        rgba(118,87,255,.17),
+        rgba(237,98,199,.06)
+    ),
+    var(--card);
+
+    overflow:hidden;
+    position:relative;
+}
+
+.featured:after{
+    content:"✦";
+
+    position:absolute;
+    right:35px;
+    top:-40px;
+
+    font-size:170px;
+
+    color:#ffffff07;
+}
+
+.featured-content{
+    position:relative;
+    z-index:2;
+}
+
+.featured small{
+    color:#a898ff;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.featured h3{
+    margin-top:8px;
+    font-size:25px;
+}
+
+.featured p{
+    max-width:720px;
+
+    margin-top:8px;
+
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* =========================
+FILTER BAR
+========================= */
+
+.filter-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:18px;
+
+    gap:15px;
+}
+
+.results{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.sort{
+    padding:10px 13px;
+
+    border:1px solid var(--line);
+    border-radius:11px;
+
+    outline:none;
+
+    color:var(--text);
+    background:var(--card);
+
+    font-size:12px;
+}
+
+/* =========================
+GRID
+========================= */
+
+.grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+    gap:19px;
+}
+
+.card{
+    overflow:hidden;
+
+    border:1px solid var(--line);
+    border-radius:21px;
+
+    background:var(--card);
+
+    transition:
+    transform .25s,
+    border-color .25s,
+    box-shadow .25s;
+
+    animation:
+    cardIn .4s ease both;
+}
+
+@keyframes cardIn{
+
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+.card:hover{
+    transform:translateY(-7px);
+
+    border-color:#7657ff66;
+
+    box-shadow:
+    0 25px 60px rgba(0,0,0,.25);
+}
+
+.card-image{
+    height:245px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:#15151d;
+}
+
+.card-image img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.6s;
+}
+
+.card:hover .card-image img{
+    transform:scale(1.07);
+}
+
+.card-image:after{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(0,0,0,.75)
+    );
+
+    pointer-events:none;
+}
+
+.tag{
+    position:absolute;
+
+    left:12px;
+    top:12px;
+    z-index:3;
+
+    padding:7px 10px;
+
+    border:1px solid #ffffff20;
+    border-radius:30px;
+
+    color:white;
+    background:#00000080;
+
+    backdrop-filter:blur(10px);
+
+    font-size:10px;
+    font-weight:850;
+}
+
+.fav{
+    position:absolute;
+
+    right:12px;
+    top:12px;
+    z-index:4;
+
+    width:39px;
+    height:39px;
+
+    border:1px solid #ffffff25;
+    border-radius:50%;
+
+    color:white;
+    background:#00000080;
+
+    backdrop-filter:blur(10px);
+
+    font-size:18px;
+
+    transition:.2s;
+}
+
+.fav:hover{
+    transform:scale(1.08);
+}
+
+.fav.active{
+    color:#ff6599;
+}
+
+.card-body{
+    padding:16px;
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.card h3{
+    font-size:15px;
+    line-height:1.35;
+}
+
+.uses{
+    white-space:nowrap;
+
+    color:#8d7dff;
+
+    font-size:9px;
+    font-weight:900;
+}
+
+.description{
+    height:58px;
+
+    overflow:hidden;
+
+    margin-top:8px;
+
+    color:var(--muted);
+
+    font-size:12px;
+    line-height:1.55;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+    margin-top:14px;
+}
+
+.action{
+    padding:10px 7px;
+
+    border:1px solid var(--line);
+    border-radius:11px;
+
+    color:var(--text);
+    background:var(--card2);
+
+    font-size:11px;
+    font-weight:850;
+}
+
+.action.primary{
+    border:0;
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+}
+
+/* =========================
+LOAD
+========================= */
+
+.load-more{
+    display:block;
+
+    margin:35px auto 0;
+
+    padding:14px 25px;
+
+    border:1px solid var(--line);
+    border-radius:13px;
+
+    color:var(--text);
+    background:var(--card);
+
+    font-size:12px;
+    font-weight:850;
+}
+
+/* =========================
+EMPTY
+========================= */
+
+.empty{
+    display:none;
+
+    text-align:center;
+
+    padding:90px 20px;
+}
+
+.empty-icon{
+    font-size:55px;
+}
+
+.empty h2{
+    margin-top:10px;
+}
+
+.empty p{
+    margin-top:7px;
+    color:var(--muted);
+}
+
+/* =========================
+LOGIN MODAL
+========================= */
+
+.overlay{
+    position:fixed;
+    inset:0;
+
+    z-index:6000;
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:#000b;
+
+    backdrop-filter:blur(18px);
+}
+
+.overlay.show{
+    display:flex;
+}
+
+.auth-box{
+    width:min(450px,100%);
+
+    padding:28px;
+
+    border:1px solid var(--line);
+    border-radius:25px;
+
+    background:var(--card);
+
+    box-shadow:
+    0 35px 120px #0009;
+
+    position:relative;
+}
+
+.auth-close{
+    position:absolute;
+
+    right:14px;
+    top:14px;
+
+    width:38px;
+    height:38px;
+
+    border:1px solid var(--line);
+    border-radius:50%;
+
+    color:var(--text);
+    background:var(--card2);
+
+    font-size:20px;
+}
+
+.auth-logo{
+    width:48px;
+    height:48px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:15px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+
+    margin-bottom:18px;
+}
+
+.auth-box h2{
+    font-size:27px;
+}
+
+.auth-box > p{
+    margin-top:7px;
+
+    color:var(--muted);
+    font-size:13px;
+}
+
+.auth-tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    gap:5px;
+
+    padding:5px;
+
+    margin:22px 0;
+
+    border-radius:13px;
+
+    background:var(--card2);
+}
+
+.auth-tab{
+    padding:10px;
+
+    border:0;
+    border-radius:9px;
+
+    color:var(--muted);
+    background:transparent;
+
+    font-size:12px;
+    font-weight:800;
+}
+
+.auth-tab.active{
+    color:white;
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--purple2)
+    );
+}
+
+.auth-form{
+    display:none;
+}
+
+.auth-form.active{
+    display:block;
+}
+
+.field{
+    margin-bottom:14px;
+}
+
+.field label{
+    display:block;
+
+    margin-bottom:6px;
+
+    color:var(--muted);
+
+    font-size:11px;
+    font-weight:800;
+}
+
+.field input{
+    width:100%;
+    height:47px;
+
+    padding:0 13px;
+
+    outline:none;
+
+    border:1px solid var(--line);
+    border-radius:12px;
+
+    color:var(--text);
+    background:var(--card2);
+}
+
+.field input:focus{
+    border-color:#7657ff88;
+}
+
+.auth-submit{
+    width:100%;
+
+    height:48px;
+
+    border:0;
+    border-radius:12px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+
+    font-weight:850;
+}
+
+.divider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    margin:18px 0;
+
+    color:var(--muted);
+
+    font-size:11px;
+}
+
+.divider:before,
+.divider:after{
+    content:"";
+
+    height:1px;
+    flex:1;
+
+    background:var(--line);
+}
+
+.google{
+    width:100%;
+    height:46px;
+
+    border:1px solid var(--line);
+    border-radius:12px;
+
+    color:var(--text);
+    background:var(--card2);
+
+    font-weight:800;
+}
+
+/* =========================
+PROFILE MENU
+========================= */
+
+.profile-menu{
+    display:none;
+
+    position:absolute;
+
+    right:20px;
+    top:65px;
+
+    width:230px;
+
+    padding:10px;
+
+    border:1px solid var(--line);
+    border-radius:17px;
+
+    background:var(--card);
+
+    box-shadow:0 20px 60px #0007;
+}
+
+.profile-menu.show{
+    display:block;
+}
+
+.profile-head{
+    padding:12px;
+
+    border-bottom:1px solid var(--line);
+
+    margin-bottom:6px;
+}
+
+.profile-head strong{
+    display:block;
+}
+
+.profile-head span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.profile-item{
+    width:100%;
+
+    padding:11px;
+
+    border:0;
+    border-radius:10px;
+
+    color:var(--text);
+    background:transparent;
+
+    text-align:left;
+
+    font-size:12px;
+    font-weight:700;
+}
+
+.profile-item:hover{
+    background:var(--card2);
+}
+
+/* =========================
+PROMPT MODAL
+========================= */
+
+.prompt-modal{
+    position:fixed;
+    inset:0;
+
+    z-index:5000;
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:#000b;
+
+    backdrop-filter:blur(18px);
+}
+
+.prompt-modal.show{
+    display:flex;
+}
+
+.prompt-box{
+    width:min(950px,100%);
+    max-height:90vh;
+
+    overflow:auto;
+
+    padding:25px;
+
+    border:1px solid var(--line);
+    border-radius:25px;
+
+    background:var(--card);
+
+    position:relative;
+}
+
+.close{
+    position:absolute;
+
+    right:15px;
+    top:15px;
+    z-index:5;
+
+    width:40px;
+    height:40px;
+
+    border:1px solid var(--line);
+    border-radius:50%;
+
+    color:var(--text);
+    background:var(--card2);
+
+    font-size:21px;
+}
+
+.prompt-image{
+    width:100%;
+
+    max-height:420px;
+
+    object-fit:cover;
+
+    border-radius:18px;
+
+    margin-bottom:20px;
+}
+
+.prompt-cat{
+    color:#9d8dff;
+
+    font-size:11px;
+    font-weight:900;
+}
+
+.prompt-box h2{
+    margin-top:7px;
+    font-size:25px;
+}
+
+.prompt-text{
+    margin-top:15px;
+
+    padding:18px;
+
+    border:1px solid var(--line);
+    border-radius:15px;
+
+    color:var(--muted);
+    background:var(--card2);
+
+    line-height:1.8;
+
+    font-size:13px;
+
+    white-space:pre-wrap;
+}
+
+.prompt-buttons{
+    display:flex;
+    gap:10px;
+
+    margin-top:15px;
+}
+
+.prompt-buttons button{
+    flex:1;
+
+    padding:13px;
+
+    border:0;
+    border-radius:12px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--purple),
+        var(--pink)
+    );
+
+    font-weight:850;
+}
+
+/* =========================
+TOAST
+========================= */
+
+.toast{
+    position:fixed;
+
+    left:50%;
+    bottom:25px;
+
+    z-index:9999;
+
+    padding:13px 20px;
+
+    border:1px solid var(--line);
+    border-radius:13px;
+
+    color:white;
+    background:#171720;
+
+    box-shadow:0 15px 40px #0007;
+
+    transform:
+    translate(-50%,100px);
+
+    opacity:0;
+
+    transition:.3s;
+}
+
+.toast.show{
+    transform:
+    translate(-50%,0);
+
+    opacity:1;
+}
+
+/* =========================
+FOOTER
+========================= */
+
+footer{
+    padding:45px 20px;
+
+    border-top:1px solid var(--line);
+
+    text-align:center;
+
+    color:var(--muted);
+
+    font-size:12px;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:1100px){
+
+    .grid{
+        grid-template-columns:
+        repeat(3,1fr);
+    }
+
+    .nav-center{
+        display:none;
+    }
+}
+
+@media(max-width:800px){
+
+    .grid{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+    .hero{
+        padding-top:55px;
+    }
+
+}
+
+@media(max-width:560px){
+
+    .nav{
+        padding:0 14px;
+    }
+
+    .nav-center{
+        display:none;
+    }
+
+    .login-btn{
+        display:none;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .hero{
+        padding:
+        48px 14px 45px;
+    }
+
+    .hero h1{
+        font-size:43px;
+        letter-spacing:-2.5px;
+    }
+
+    .hero p{
+        font-size:14px;
+    }
+
+    .search-box{
+        height:60px;
+        border-radius:17px;
+    }
+
+    .shortcut{
+        display:none;
+    }
+
+    .search-btn{
+        height:46px;
+        padding:0 16px;
+        border-radius:12px;
+    }
+
+    .container{
+        padding-left:14px;
+        padding-right:14px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .card-image{
+        height:270px;
+    }
+
+    .stats{
+        gap:28px;
+    }
+
+    .filter-bar{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
+
+/* =====================================================
+   AI PROMPT GENERATOR
+   ===================================================== */
+.generator-launch{display:flex;justify-content:center;margin:22px auto 0}
+.generator-btn{border:0;border-radius:14px;padding:13px 22px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7c3aed,#2563eb);box-shadow:0 10px 28px rgba(99,102,241,.28);transition:.2s}
+.generator-btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.generator-overlay{position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;z-index:1000}
+.generator-overlay.show{display:flex}
+.generator-box{width:min(920px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:var(--card-bg,#111827);box-shadow:0 30px 90px rgba(0,0,0,.45);padding:26px}
+.generator-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}.generator-head h2{margin:0}.generator-head p{margin:5px 0 0;opacity:.7}.generator-close{border:0;background:transparent;color:inherit;font-size:30px;cursor:pointer}
+.generator-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.generator-field{display:flex;flex-direction:column;gap:7px}.generator-field.full{grid-column:1/-1}.generator-field label{font-weight:700;font-size:13px}.generator-field input,.generator-field select,.generator-field textarea{width:100%;border:1px solid rgba(127,127,127,.25);border-radius:11px;padding:12px;background:rgba(127,127,127,.08);color:inherit;outline:none}.generator-field textarea{min-height:92px;resize:vertical}.generator-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.generator-actions button{border:0;border-radius:11px;padding:11px 16px;cursor:pointer;font-weight:750}.gen-primary{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff}.gen-secondary{background:rgba(127,127,127,.13);color:inherit}.generator-output{margin-top:18px;border-radius:15px;padding:16px;background:rgba(127,127,127,.08);border:1px solid rgba(127,127,127,.18);display:none}.generator-output.show{display:block}.generator-output-title{font-weight:800;margin-bottom:9px}.generator-result{white-space:pre-wrap;line-height:1.65;font-size:14px}.generator-note{font-size:12px;opacity:.65;margin-top:10px}
+@media(max-width:650px){.generator-form{grid-template-columns:1fr}.generator-field.full{grid-column:auto}.generator-box{padding:18px}}
+
+
+/* ===== AI IMAGE GENERATOR ADD-ON ===== */
+.imagegen-launch{display:flex;justify-content:center;margin:22px 0}
+.imagegen-btn{border:0;border-radius:14px;padding:13px 20px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;box-shadow:0 10px 30px rgba(37,99,235,.2)}
+.imagegen-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;align-items:center;justify-content:center;padding:18px}
+.imagegen-overlay.show{display:flex}
+.imagegen-box{width:min(920px,100%);max-height:92vh;overflow:auto;background:var(--card,#fff);color:var(--text,#111827);border-radius:22px;padding:22px;box-shadow:0 25px 80px rgba(0,0,0,.35)}
+.imagegen-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.imagegen-head h2{margin:0}.imagegen-close{border:0;background:transparent;font-size:28px;cursor:pointer;color:inherit}
+.imagegen-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.imagegen-field{display:flex;flex-direction:column;gap:7px}.imagegen-field.full{grid-column:1/-1}
+.imagegen-field label{font-weight:700;font-size:14px}.imagegen-field input,.imagegen-field textarea,.imagegen-field select{width:100%;padding:11px 12px;border:1px solid #d1d5db;border-radius:10px;background:transparent;color:inherit;font:inherit}.imagegen-field textarea{min-height:110px;resize:vertical}
+.imagegen-upload{border:2px dashed #9ca3af;border-radius:14px;padding:16px;text-align:center;cursor:pointer}.imagegen-upload input{display:none}.imagegen-preview{display:none;margin-top:12px;max-height:260px;width:100%;object-fit:contain;border-radius:14px}
+.imagegen-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.imagegen-actions button{border:0;border-radius:11px;padding:11px 16px;cursor:pointer;font-weight:800}.imagegen-primary{background:#2563eb;color:#fff}.imagegen-secondary{background:#e5e7eb;color:#111827}
+.imagegen-result{margin-top:18px;min-height:80px;border-radius:14px;background:rgba(127,127,127,.08);padding:12px;text-align:center}.imagegen-result img{max-width:100%;max-height:520px;border-radius:14px}.imagegen-note{font-size:12px;opacity:.7;margin-top:8px}
+@media(max-width:680px){.imagegen-grid{grid-template-columns:1fr}.imagegen-field.full{grid-column:auto}}
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+NAVBAR
+===================================================== -->
+
+<nav class="navbar">
+
+<div class="nav">
+
+    <a href="#" class="logo">
+
+        <div class="logo-icon">
+            ✦
+        </div>
+
+        PromptForge AI
+
+    </a>
+
+
+    <div class="nav-center">
+
+        <a
+            class="nav-link"
+            href="#">
+            Home
+        </a>
+
+        <a
+            class="nav-link"
+            href="#explore">
+            Explore
+        </a>
+
+        <a
+            class="nav-link"
+            href="#categories">
+            Categories
+        </a>
+
+        <a
+            class="nav-link"
+            href="#about">
+            About
+        </a>
+
+    </div>
+
+
+    <div class="nav-right">
+
+        <button
+            class="icon-btn"
+            onclick="showFavorites()"
+            title="Favorites">
+            ♡
+        </button>
+
+        <button
+            class="icon-btn"
+            onclick="toggleTheme()"
+            id="themeBtn">
+            ☀️
+        </button>
+
+        <button
+            class="login-btn"
+            id="loginButton"
+            onclick="openAuth()">
+            Login / Sign up
+        </button>
+
+        <button
+            class="avatar user-menu"
+            id="avatarButton"
+            onclick="toggleProfile()">
+            U
+        </button>
+
+    </div>
+
+</div>
+
+</nav>
+
+
+<!-- PROFILE MENU -->
+
+<div
+    class="profile-menu"
+    id="profileMenu">
+
+    <div class="profile-head">
+
+        <strong id="profileName">
+            User
+        </strong>
+
+        <span id="profileEmail">
+            user@example.com
+        </span>
+
+    </div>
+
+    <button
+        class="profile-item"
+        onclick="showFavorites()">
+        ♥ My Favorites
+    </button>
+
+    <button
+        class="profile-item"
+        onclick="toast('Profile settings coming soon')">
+        ⚙ Account Settings
+    </button>
+
+    <button
+        class="profile-item"
+        onclick="logout()">
+        ⇥ Logout
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+HERO
+===================================================== -->
+
+<section class="hero">
+
+<div class="badge">
+
+    <span class="dot"></span>
+
+    PREMIUM AI PROMPT LIBRARY
+
+</div>
+
+
+<h1>
+
+    Your Photo.
+    <span class="gradient">
+        Your Style.
+    </span>
+
+</h1>
+
+
+<p>
+
+    Discover powerful AI photo prompts designed
+    for your own pictures. Transform ordinary
+    photos into cinematic, anime, fashion,
+    luxury and creative masterpieces.
+
+</p>
+
+
+<div class="search-area">
+
+<div class="search-box">
+
+    <div class="search-icon">
+        ⌕
+    </div>
+
+    <input
+        id="searchInput"
+        placeholder="Search prompts, styles, anime, fashion..."
+        autocomplete="off"
+    >
+
+    <div class="shortcut">
+        /
+    </div>
+
+    <button
+        class="search-btn"
+        onclick="runSearch()">
+        Search
+    </button>
+
+</div>
+
+</div>
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <strong id="totalPrompts">
+            1,760+
+        </strong>
+
+        <span>
+            AI Prompts
+        </span>
+
+    </div>
+
+
+    <div class="stat">
+
+        <strong>
+            16
+        </strong>
+
+        <span>
+            Categories
+        </span>
+
+    </div>
+
+
+    <div class="stat">
+
+        <strong>
+            100+
+        </strong>
+
+        <span>
+            Per Category
+        </span>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+MAIN
+===================================================== -->
+
+<main
+    class="container"
+    id="explore">
+
+
+<div class="section-title">
+
+    <h2>
+        Explore AI Prompts
+    </h2>
+
+    <p>
+        Find a style, copy the prompt and transform your own photo.
+    </p>
+
+</div>
+
+
+<!-- CATEGORIES -->
+
+<div
+    class="categories"
+    id="categories">
+</div>
+
+
+
+<!-- =====================================================
+     AI PROMPT GENERATOR
+     ===================================================== -->
+<div class="generator-launch">
+    <button class="generator-btn" onclick="openGenerator()">✨ AI Prompt Generator</button>
+</div>
+
+<div class="generator-overlay" id="generatorOverlay">
+    <div class="generator-box">
+        <div class="generator-head">
+            <div>
+                <h2>✨ AI Prompt Generator</h2>
+                <p>Create a custom photo prompt from your own choices.</p>
+            </div>
+            <button class="generator-close" onclick="closeGenerator()">×</button>
+        </div>
+
+        <div class="generator-form">
+            <div class="generator-field">
+                <label>Category</label>
+                <select id="genCategory" onchange="updateGeneratorOptions()"></select>
+            </div>
+            <div class="generator-field">
+                <label>Subject</label>
+                <select id="genSubject"></select>
+            </div>
+            <div class="generator-field">
+                <label>Style / Lighting</label>
+                <select id="genStyle"></select>
+            </div>
+            <div class="generator-field">
+                <label>Location</label>
+                <select id="genPlace"></select>
+            </div>
+            <div class="generator-field">
+                <label>Camera</label>
+                <select id="genCamera">
+                    <option>85mm portrait lens</option><option>50mm cinematic lens</option><option>35mm street photography lens</option><option>24mm wide-angle lens</option><option>70-200mm telephoto look</option>
+                </select>
+            </div>
+            <div class="generator-field">
+                <label>Aspect Ratio</label>
+                <select id="genRatio"><option>4:5 portrait</option><option>1:1 square</option><option>16:9 cinematic</option><option>9:16 vertical</option><option>3:2 photography</option></select>
+            </div>
+            <div class="generator-field">
+                <label>Mood</label>
+                <select id="genMood"><option>confident and cinematic</option><option>calm and elegant</option><option>mysterious and dramatic</option><option>energetic and bold</option><option>dreamy and atmospheric</option><option>premium and luxurious</option></select>
+            </div>
+            <div class="generator-field">
+                <label>Detail Level</label>
+                <select id="genDetail"><option>highly detailed</option><option>ultra detailed</option><option>clean professional detail</option><option>film-grain detailed</option></select>
+            </div>
+            <div class="generator-field full">
+                <label>Custom instruction (optional)</label>
+                <textarea id="genCustom" placeholder="Example: black jacket, hands in pockets, looking at camera..."></textarea>
+            </div>
+        </div>
+
+        <div class="generator-actions">
+            <button class="gen-primary" onclick="generateCustomPrompt()">⚡ Generate Prompt</button>
+            <button class="gen-secondary" onclick="randomizeGenerator()">🎲 Randomize</button>
+            <button class="gen-secondary" onclick="resetGenerator()">↺ Reset</button>
+        </div>
+
+        <div class="generator-output" id="generatorOutput">
+            <div class="generator-output-title">Your generated prompt</div>
+            <div class="generator-result" id="generatorResult"></div>
+            <div class="generator-actions">
+                <button class="gen-primary" onclick="copyGeneratedPrompt()">📋 Copy Prompt</button>
+                <button class="gen-secondary" onclick="saveGeneratedPrompt()">♥ Save</button>
+                <button class="gen-secondary" onclick="downloadGeneratedPrompt()">⬇ Download</button>
+            </div>
+            <div class="generator-note">This generator runs directly in your browser; no API key is required.</div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ===== AI IMAGE GENERATOR ===== -->
+<div class="imagegen-launch">
+  <button class="imagegen-btn" type="button" onclick="openImageGenerator()">🖼️ AI Image Generator</button>
+</div>
+
+<div class="imagegen-overlay" id="imageGenOverlay">
+  <div class="imagegen-box" role="dialog" aria-modal="true" aria-labelledby="imageGenTitle">
+    <div class="imagegen-head">
+      <h2 id="imageGenTitle">🖼️ AI Image Generator</h2>
+      <button class="imagegen-close" type="button" onclick="closeImageGenerator()">&times;</button>
+    </div>
+    <div class="imagegen-grid">
+      <div class="imagegen-field full">
+        <label>Upload your picture</label>
+        <label class="imagegen-upload">
+          📷 Tap here to choose a photo
+          <input id="imageGenPhoto" type="file" accept="image/*" onchange="previewImageGenPhoto(event)">
+          <img id="imageGenPhotoPreview" class="imagegen-preview" alt="Selected photo preview">
+        </label>
+      </div>
+      <div class="imagegen-field full">
+        <label for="imageGenPrompt">Prompt</label>
+        <textarea id="imageGenPrompt" placeholder="Describe how you want your photo transformed..."></textarea>
+      </div>
+      <div class="imagegen-field">
+        <label for="imageGenStyle">Style</label>
+        <select id="imageGenStyle"><option>Photorealistic</option><option>Cinematic</option><option>Anime</option><option>3D Render</option><option>Illustration</option><option>Vintage</option></select>
+      </div>
+      <div class="imagegen-field">
+        <label for="imageGenRatio">Aspect Ratio</label>
+        <select id="imageGenRatio"><option value="1:1">1:1 Square</option><option value="4:5">4:5 Portrait</option><option value="16:9">16:9 Landscape</option><option value="9:16">9:16 Story</option></select>
+      </div>
+    </div>
+    <div class="imagegen-actions">
+      <button class="imagegen-primary" type="button" onclick="generateImageGen()">✨ Generate Image</button>
+      <button class="imagegen-secondary" type="button" onclick="resetImageGenerator()">Reset</button>
+      <button class="imagegen-secondary" id="imageGenDownload" type="button" onclick="downloadImageGen()" style="display:none">⬇️ Download</button>
+    </div>
+    <div class="imagegen-result" id="imageGenResult">Upload a photo and enter a prompt to get started.</div>
+    <div class="imagegen-note">The interface is ready for an image-generation API. A real AI result requires a backend/API connection; your API key should not be placed directly in this HTML file.</div>
+  </div>
+</div>
+
+<!-- FEATURED -->
+
+<section class="featured">
+
+<div class="featured-content">
+
+    <small>
+        ✦ PROMPTFORGE FEATURED
+    </small>
+
+    <h3>
+        One photo. Endless possibilities.
+    </h3>
+
+    <p>
+        Browse thousands of creative prompt combinations
+        for portraits, fashion, anime, cinematic scenes,
+        luxury lifestyle, cars, travel and more.
+    </p>
+
+</div>
+
+</section>
+
+
+<!-- FILTER -->
+
+<div class="filter-bar">
+
+    <div
+        class="results"
+        id="resultInfo">
+        Showing prompts
+    </div>
+
+    <select
+        class="sort"
+        id="sortSelect"
+        onchange="render()">
+
+        <option value="featured">
+            ✦ Featured
+        </option>
+
+        <option value="newest">
+            Newest
+        </option>
+
+        <option value="az">
+            A — Z
+        </option>
+
+    </select>
+
+</div>
+
+
+<!-- GRID -->
+
+<div
+    class="grid"
+    id="promptGrid">
+</div>
+
+
+<div
+    class="empty"
+    id="empty">
+
+    <div class="empty-icon">
+        🔎
+    </div>
+
+    <h2>
+        No prompts found
+    </h2>
+
+    <p>
+        Try another search or category.
+    </p>
+
+</div>
+
+
+<button
+    class="load-more"
+    id="loadMore"
+    onclick="loadMore()">
+
+    Load More Prompts
+
+</button>
+
+</main>
+
+
+<!-- =====================================================
+LOGIN / SIGNUP
+===================================================== -->
+
+<div
+    class="overlay"
+    id="authOverlay">
+
+<div class="auth-box">
+
+<button
+    class="auth-close"
+    onclick="closeAuth()">
+    ×
+</button>
+
+
+<div class="auth-logo">
+    ✦
+</div>
+
+
+<h2>
+    Welcome to PromptForge
+</h2>
+
+<p>
+    Save prompts and build your personal AI library.
+</p>
+
+
+<div class="auth-tabs">
+
+<button
+    class="auth-tab active"
+    onclick="switchAuth('login')">
+    Login
+</button>
+
+<button
+    class="auth-tab"
+    onclick="switchAuth('signup')">
+    Sign Up
+</button>
+
+</div>
+
+
+<!-- LOGIN -->
+
+<form
+    class="auth-form active"
+    id="loginForm"
+    onsubmit="login(event)">
+
+<div class="field">
+
+<label>
+    Email
+</label>
+
+<input
+    id="loginEmail"
+    type="email"
+    placeholder="you@example.com"
+    required>
+
+</div>
+
+
+<div class="field">
+
+<label>
+    Password
+</label>
+
+<input
+    id="loginPassword"
+    type="password"
+    placeholder="••••••••"
+    required>
+
+</div>
+
+
+<button
+    class="auth-submit">
+    Login
+</button>
+
+</form>
+
+
+<!-- SIGNUP -->
+
+<form
+    class="auth-form"
+    id="signupForm"
+    onsubmit="signup(event)">
+
+<div class="field">
+
+<label>
+    Name
+</label>
+
+<input
+    id="signupName"
+    type="text"
+    placeholder="Your name"
+    required>
+
+</div>
+
+
+<div class="field">
+
+<label>
+    Email
+</label>
+
+<input
+    id="signupEmail"
+    type="email"
+    placeholder="you@example.com"
+    required>
+
+</div>
+
+
+<div class="field">
+
+<label>
+    Password
+</label>
+
+<input
+    id="signupPassword"
+    type="password"
+    placeholder="Create a password"
+    minlength="6"
+    required>
+
+</div>
+
+
+<button
+    class="auth-submit">
+    Create Account
+</button>
+
+</form>
+
+
+<div class="divider">
+    OR
+</div>
+
+
+<button
+    class="google"
+    onclick="demoGoogleLogin()">
+
+    G Continue with Google
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+PROMPT MODAL
+===================================================== -->
+
+<div
+    class="prompt-modal"
+    id="promptModal">
+
+<div class="prompt-box">
+
+<button
+    class="close"
+    onclick="closePrompt()">
+    ×
+</button>
+
+
+<img
+    id="modalImage"
+    class="prompt-image"
+    alt="Prompt preview">
+
+
+<div
+    id="modalCategory"
+    class="prompt-cat">
+</div>
+
+
+<h2
+    id="modalTitle">
+</h2>
+
+
+<div
+    id="modalText"
+    class="prompt-text">
+</div>
+
+
+<div class="prompt-buttons">
+
+<button
+    onclick="copyCurrent()">
+    📋 Copy Prompt
+</button>
+
+<button
+    onclick="downloadCurrent()">
+    ⬇ Download
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<!-- =====================================================
+FOOTER
+===================================================== -->
+
+<footer id="about">
+
+    <strong>
+        ✦ PromptForge AI
+    </strong>
+
+    <br><br>
+
+    Premium AI photo prompt library.
+
+    <br><br>
+
+    © 2026 PromptForge AI · All rights reserved.
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+CATEGORY DATABASE
+===================================================== */
+
+const categories={
+
+"Anime":{
+icon:"🎌",
+subjects:[
+"anime hero portrait",
+"anime warrior portrait",
+"anime samurai portrait",
+"anime student portrait",
+"anime traveler portrait",
+"anime detective portrait",
+"anime musician portrait",
+"anime adventurer portrait",
+"anime street character",
+"anime fantasy character"
+],
+styles:[
+"cinematic anime lighting",
+"soft sunset lighting",
+"neon night lighting",
+"dramatic moonlight",
+"glowing rim lighting",
+"rainy cinematic atmosphere",
+"blue night lighting",
+"golden hour lighting",
+"dreamy lighting",
+"epic movie lighting"
+],
+places:[
+"Tokyo street",
+"neon city",
+"cherry blossom street",
+"rainy alley",
+"Japanese temple",
+"futuristic city",
+"train station",
+"mountain",
+"fantasy forest",
+"rooftop at night"
+]
+},
+
+"Fashion":{
+icon:"👗",
+subjects:[
+"high fashion portrait",
+"streetwear portrait",
+"luxury fashion portrait",
+"editorial fashion portrait",
+"designer outfit portrait",
+"modern fashion portrait",
+"runway inspired portrait",
+"premium lifestyle portrait",
+"urban fashion portrait",
+"magazine cover portrait"
+],
+styles:[
+"Vogue editorial lighting",
+"cinematic studio lighting",
+"soft luxury lighting",
+"dramatic fashion lighting",
+"golden hour lighting",
+"professional flash photography",
+"moody studio lighting",
+"high contrast lighting",
+"soft window light",
+"magazine lighting"
+],
+places:[
+"luxury studio",
+"Paris street",
+"modern hotel",
+"city rooftop",
+"designer showroom",
+"urban street",
+"minimal white studio",
+"fashion runway",
+"luxury apartment",
+"modern architecture"
+]
+},
+
+"Black & White":{
+icon:"🖤",
+subjects:[
+"dramatic portrait",
+"classic portrait",
+"cinematic portrait",
+"editorial portrait",
+"mysterious portrait",
+"vintage portrait",
+"professional portrait",
+"artistic portrait",
+"close-up portrait",
+"timeless portrait"
+],
+styles:[
+"deep monochrome contrast",
+"classic film photography",
+"high contrast black and white",
+"soft monochrome tones",
+"dramatic shadows",
+"cinematic monochrome",
+"35mm film grain",
+"analog photography",
+"dark editorial lighting",
+"studio monochrome lighting"
+],
+places:[
+"dark studio",
+"old city street",
+"rainy street",
+"empty hallway",
+"classic room",
+"urban rooftop",
+"old train station",
+"window side",
+"historic building",
+"minimal studio"
+]
+},
+
+"Cinematic":{
+icon:"🎬",
+subjects:[
+"cinematic hero portrait",
+"movie character portrait",
+"dramatic protagonist portrait",
+"film poster portrait",
+"action movie portrait",
+"mystery character portrait",
+"adventure character portrait",
+"epic protagonist portrait",
+"emotional movie portrait",
+"blockbuster character portrait"
+],
+styles:[
+"Hollywood cinematic lighting",
+"anamorphic movie lighting",
+"35mm film look",
+"dramatic rim lighting",
+"volumetric lighting",
+"deep cinematic shadows",
+"cinematic color grading",
+"high-end film grading",
+"epic blockbuster lighting",
+"dramatic backlight"
+],
+places:[
+"rainy city street",
+"desert road",
+"dark warehouse",
+"luxury hotel",
+"mountain road",
+"neon city",
+"European street",
+"rooftop",
+"forest",
+"dramatic coastline"
+]
+},
+
+"Luxury":{
+icon:"👑",
+subjects:[
+"luxury lifestyle portrait",
+"premium businessman portrait",
+"luxury fashion portrait",
+"royal portrait",
+"wealth aesthetic portrait",
+"luxury travel portrait",
+"premium car lifestyle portrait",
+"elegant portrait",
+"luxury magazine portrait",
+"elite lifestyle portrait"
+],
+styles:[
+"premium editorial lighting",
+"golden luxury lighting",
+"cinematic studio lighting",
+"soft luxury glow",
+"dramatic spotlight",
+"high-end commercial lighting",
+"rich cinematic shadows",
+"magazine cover lighting",
+"warm golden lighting",
+"ultra polished lighting"
+],
+places:[
+"luxury hotel",
+"private jet interior",
+"premium lounge",
+"modern mansion",
+"five star lobby",
+"luxury rooftop",
+"designer showroom",
+"premium restaurant",
+"premium car garage",
+"marble palace"
+]
+},
+
+"Rain":{
+icon:"🌧️",
+subjects:[
+"cinematic rainy portrait",
+"rainy street portrait",
+"fashion rain portrait",
+"night rain portrait",
+"urban rain portrait",
+"dramatic rain portrait",
+"movie rain portrait",
+"street photography portrait",
+"rainy traveler portrait",
+"cinematic rain portrait"
+],
+styles:[
+"soft rain lighting",
+"neon reflections",
+"cinematic blue tones",
+"dramatic backlight",
+"moody film lighting",
+"soft diffused light",
+"high contrast night lighting",
+"volumetric rain lighting",
+"35mm film texture",
+"dark cinematic grading"
+],
+places:[
+"rainy city street",
+"neon alley",
+"empty road",
+"city bridge",
+"train station",
+"old street",
+"rooftop",
+"urban cafe exterior",
+"night market",
+"modern downtown"
+]
+},
+
+"Night & Neon":{
+icon:"🌃",
+subjects:[
+"neon portrait",
+"cyber city portrait",
+"night street portrait",
+"futuristic portrait",
+"urban night portrait",
+"neon fashion portrait",
+"cinematic night portrait",
+"night traveler portrait",
+"cyberpunk portrait",
+"city lights portrait"
+],
+styles:[
+"purple neon lighting",
+"blue neon lighting",
+"pink neon lighting",
+"cyan cinematic lighting",
+"magenta glow",
+"neon rim light",
+"dramatic night lighting",
+"wet street reflections",
+"futuristic color grading",
+"high contrast neon"
+],
+places:[
+"Tokyo neon street",
+"cyberpunk alley",
+"night downtown",
+"neon rooftop",
+"night market",
+"subway entrance",
+"futuristic city",
+"neon cafe",
+"city bridge",
+"rainy neon street"
+]
+},
+
+"Portrait":{
+icon:"📸",
+subjects:[
+"professional portrait",
+"cinematic portrait",
+"studio portrait",
+"editorial portrait",
+"close-up portrait",
+"environmental portrait",
+"fashion portrait",
+"natural portrait",
+"premium profile portrait",
+"creative portrait"
+],
+styles:[
+"85mm portrait photography",
+"soft studio lighting",
+"cinematic lighting",
+"golden hour lighting",
+"window lighting",
+"dramatic rim light",
+"softbox lighting",
+"natural daylight",
+"moody portrait lighting",
+"professional magazine lighting"
+],
+places:[
+"professional studio",
+"city street",
+"modern apartment",
+"rooftop",
+"nature",
+"luxury hotel",
+"minimal room",
+"urban environment",
+"beach",
+"mountain landscape"
+]
+},
+
+"Cars":{
+icon:"🚗",
+subjects:[
+"luxury sports car scene",
+"supercar photoshoot",
+"premium car lifestyle scene",
+"cinematic car scene",
+"street car photography",
+"performance car portrait",
+"modern car photoshoot",
+"night car scene",
+"exotic car scene",
+"premium automotive editorial"
+],
+styles:[
+"cinematic automotive lighting",
+"studio car lighting",
+"neon reflections",
+"golden hour lighting",
+"dramatic rim lighting",
+"dark luxury lighting",
+"commercial car photography",
+"35mm film look",
+"high contrast lighting",
+"premium magazine grading"
+],
+places:[
+"city street",
+"mountain road",
+"underground garage",
+"neon street",
+"desert road",
+"coastal road",
+"modern parking garage",
+"luxury hotel entrance",
+"rainy road",
+"city rooftop parking"
+]
+},
+
+"Travel":{
+icon:"✈️",
+subjects:[
+"cinematic traveler portrait",
+"adventure portrait",
+"travel influencer portrait",
+"luxury traveler portrait",
+"mountain traveler portrait",
+"city traveler portrait",
+"beach traveler portrait",
+"European travel portrait",
+"desert traveler portrait",
+"explorer portrait"
+],
+styles:[
+"travel magazine lighting",
+"golden hour",
+"cinematic color grading",
+"soft natural light",
+"film photography",
+"warm sunset tones",
+"dramatic landscape lighting",
+"premium travel editorial",
+"documentary photography",
+"35mm travel film look"
+],
+places:[
+"Swiss mountains",
+"Paris street",
+"Dubai skyline",
+"Japanese street",
+"tropical beach",
+"desert landscape",
+"Italian village",
+"New York street",
+"Greek island",
+"forest trail"
+]
+},
+
+"Architecture":{
+icon:"🏛️",
+subjects:[
+"architectural portrait",
+"modern building scene",
+"luxury architecture scene",
+"futuristic building scene",
+"minimal architecture scene",
+"urban architecture portrait",
+"editorial architecture scene",
+"cinematic architecture scene",
+"premium interior scene",
+"modern lifestyle architecture"
+],
+styles:[
+"architectural photography",
+"cinematic lighting",
+"soft daylight",
+"dramatic shadows",
+"golden hour",
+"blue hour",
+"minimal photography",
+"high contrast photography",
+"luxury editorial lighting",
+"symmetrical composition"
+],
+places:[
+"modern skyscraper",
+"luxury mansion",
+"minimalist house",
+"futuristic city",
+"modern hotel",
+"glass building",
+"marble interior",
+"urban plaza",
+"museum",
+"modern rooftop"
+]
+},
+
+"Fantasy":{
+icon:"🌌",
+subjects:[
+"fantasy hero portrait",
+"magical character portrait",
+"fantasy warrior portrait",
+"mystical traveler portrait",
+"epic fantasy portrait",
+"enchanted forest portrait",
+"royal fantasy portrait",
+"ancient warrior portrait",
+"mythical character portrait",
+"fantasy movie character"
+],
+styles:[
+"epic fantasy lighting",
+"magical blue glow",
+"golden mystical lighting",
+"volumetric fog",
+"dramatic cinematic lighting",
+"moonlight",
+"enchanted glow",
+"dark fantasy grading",
+"epic movie grading",
+"magical rim lighting"
+],
+places:[
+"enchanted forest",
+"ancient castle",
+"misty mountains",
+"magical kingdom",
+"ancient temple",
+"mystical lake",
+"dark forest",
+"fantasy city",
+"floating island",
+"epic landscape"
+]
+},
+
+"3D":{
+icon:"🧊",
+subjects:[
+"3D character portrait",
+"3D fashion character",
+"3D futuristic portrait",
+"3D cartoon portrait",
+"3D gaming character",
+"3D cinematic character",
+"3D luxury character",
+"3D anime character",
+"3D realistic character",
+"3D collectible character"
+],
+styles:[
+"premium 3D render",
+"cinematic 3D lighting",
+"studio render",
+"game engine render",
+"realistic materials",
+"soft studio lighting",
+"dramatic rim lighting",
+"high-end commercial render",
+"volumetric lighting",
+"ultra detailed render"
+],
+places:[
+"futuristic studio",
+"modern city",
+"gaming environment",
+"luxury room",
+"space station",
+"cyberpunk city",
+"minimal studio",
+"fantasy environment",
+"neon room",
+"cinematic world"
+]
+},
+
+"Street Style":{
+icon:"🏙️",
+subjects:[
+"streetwear portrait",
+"urban fashion portrait",
+"city lifestyle portrait",
+"street photography portrait",
+"casual fashion portrait",
+"modern urban portrait",
+"editorial street portrait",
+"youth fashion portrait",
+"premium street style portrait",
+"city traveler portrait"
+],
+styles:[
+"street photography",
+"flash photography",
+"35mm film look",
+"cinematic lighting",
+"soft daylight",
+"high contrast",
+"editorial lighting",
+"urban color grading",
+"moody street lighting",
+"documentary photography"
+],
+places:[
+"New York street",
+"Tokyo street",
+"London street",
+"Paris street",
+"urban alley",
+"city subway",
+"rooftop",
+"shopping district",
+"graffiti wall",
+"city crosswalk"
+]
+},
+
+"Vintage":{
+icon:"🕰️",
+subjects:[
+"vintage portrait",
+"retro fashion portrait",
+"old film portrait",
+"classic portrait",
+"retro street portrait",
+"vintage lifestyle portrait",
+"old cinema portrait",
+"analog portrait",
+"nostalgic portrait",
+"classic editorial portrait"
+],
+styles:[
+"1970s film photography",
+"1980s analog photography",
+"old camera texture",
+"35mm film grain",
+"faded film colors",
+"warm vintage tones",
+"soft retro lighting",
+"classic cinema grading",
+"Polaroid inspired texture",
+"analog editorial style"
+],
+places:[
+"old city street",
+"vintage cafe",
+"classic hotel",
+"retro room",
+"old train station",
+"historic street",
+"old cinema",
+"vintage car garage",
+"classic apartment",
+"European old town"
+]
+},
+
+"Nature":{
+icon:"🌿",
+subjects:[
+"nature portrait",
+"forest portrait",
+"mountain portrait",
+"outdoor lifestyle portrait",
+"adventure portrait",
+"nature fashion portrait",
+"cinematic outdoor portrait",
+"travel nature portrait",
+"peaceful portrait",
+"environmental portrait"
+],
+styles:[
+"golden hour",
+"soft natural light",
+"cinematic outdoor lighting",
+"dramatic sunlight",
+"misty atmosphere",
+"film photography",
+"warm color grading",
+"natural documentary style",
+"soft backlight",
+"epic landscape lighting"
+],
+places:[
+"pine forest",
+"mountain valley",
+"misty forest",
+"waterfall",
+"green meadow",
+"lake",
+"desert",
+"coastal cliff",
+"autumn forest",
+"snowy mountain"
+]
+}
+
+};
+
+
+/* =====================================================
+GENERATE PROMPTS
+===================================================== */
+
+let prompts=[];
+let id=1;
+
+for(
+    const [category,data]
+    of Object.entries(categories)
+){
+
+    let count=0;
+
+    for(
+        const subject
+        of data.subjects
+    ){
+
+        for(
+            const style
+            of data.styles
+        ){
+
+            for(
+                const place
+                of data.places
+            ){
+
+                if(count>=110)
+                    break;
+
+                const prompt=
+`Transform my uploaded reference photo into ${subject}.
+
+Keep the person's identity recognizable. Preserve the natural facial structure, facial proportions, hairstyle and overall likeness from the reference image.
+
+Place the subject in ${place} with ${style}.
+
+Create a highly detailed professional image with realistic skin texture, natural facial details, accurate lighting, realistic depth of field, cinematic composition, premium color grading and professional photography quality.
+
+Make the result look like a real professional photoshoot rather than a low-quality artificial image.
+
+Ultra detailed, sharp focus, realistic textures, cinematic atmosphere, high resolution, professional photography.`;
+
+                prompts.push({
+
+                    id:id++,
+
+                    category,
+
+                    title:
+                    subject.charAt(0).toUpperCase()+
+                    subject.slice(1)+
+                    " — "+
+                    place,
+
+                    prompt,
+
+                    query:encodeURIComponent(
+                        subject+
+                        " "+
+                        style+
+                        " "+
+                        place
+                    ),
+
+                    featured:
+                    count<15,
+
+                    uses:
+                    200+
+                    Math.floor(
+                        Math.random()*4800
+                    )
+
+                });
+
+                count++;
+
+            }
+
+            if(count>=110)
+                break;
+        }
+
+        if(count>=110)
+            break;
+    }
+}
+
+
+document.getElementById(
+    "totalPrompts"
+).textContent=
+prompts.length.toLocaleString()+"+";
+
+
+/* =====================================================
+STATE
+===================================================== */
+
+let currentCategory="All";
+let currentSearch="";
+let visible=32;
+let currentPrompt=null;
+
+let favorites=
+JSON.parse(
+    localStorage.getItem(
+        "pfFavorites"
+    )||"[]"
+);
+
+
+/* =====================================================
+CATEGORIES
+===================================================== */
+
+function createCategories(){
+
+    const box=
+    document.getElementById(
+        "categories"
+    );
+
+    box.innerHTML="";
+
+
+    const all=
+    document.createElement("button");
+
+    all.className=
+        "category active";
+
+    all.innerHTML=
+        "✨ All";
+
+    all.onclick=()=>{
+
+        currentCategory="All";
+        visible=32;
+
+        updateCategories();
+        render();
+
+    };
+
+    box.appendChild(all);
+
+
+    for(
+        const [name,data]
+        of Object.entries(categories)
+    ){
+
+        const button=
+        document.createElement("button");
+
+        button.className=
+            "category";
+
+        button.dataset.category=
+            name;
+
+        button.innerHTML=
+            `${data.icon} ${name}`;
+
+        button.onclick=()=>{
+
+            currentCategory=name;
+            visible=32;
+
+            updateCategories();
+            render();
+
+        };
+
+        box.appendChild(button);
+    }
+}
+
+
+function updateCategories(){
+
+    document
+    .querySelectorAll(".category")
+    .forEach(
+        x=>x.classList.remove(
+            "active"
+        )
+    );
+
+    if(currentCategory==="All"){
+
+        document
+        .querySelector(".category")
+        .classList.add("active");
+
+    }else{
+
+        const item=
+        [...document
+        .querySelectorAll(".category")]
+        .find(
+            x=>
+            x.dataset.category===
+            currentCategory
+        );
+
+        if(item)
+            item.classList.add(
+                "active"
+            );
+    }
+}
+
+
+/* =====================================================
+RESULTS
+===================================================== */
+
+function getResults(){
+
+    let list=[...prompts];
+
+
+    if(
+        currentCategory!=="All"
+    ){
+
+        list=list.filter(
+            x=>
+            x.category===
+            currentCategory
+        );
+    }
+
+
+    if(currentSearch){
+
+        const q=
+        currentSearch.toLowerCase();
+
+        list=list.filter(
+            x=>
+
+            x.title
+            .toLowerCase()
+            .includes(q)
+
+            ||
+
+            x.category
+            .toLowerCase()
+            .includes(q)
+
+            ||
+
+            x.prompt
+            .toLowerCase()
+            .includes(q)
+        );
+    }
+
+
+    const sort=
+    document.getElementById(
+        "sortSelect"
+    ).value;
+
+
+    if(sort==="featured"){
+
+        list.sort(
+            (a,b)=>
+            Number(b.featured)-
+            Number(a.featured)
+        );
+
+    }
+
+
+    if(sort==="newest"){
+
+        list.sort(
+            (a,b)=>
+            b.id-a.id
+        );
+
+    }
+
+
+    if(sort==="az"){
+
+        list.sort(
+            (a,b)=>
+            a.title.localeCompare(
+                b.title
+            )
+        );
+    }
+
+
+    return list;
+}
+
+
+/* =====================================================
+CARD
+===================================================== */
+
+function createCard(item,index){
+
+    const card=
+    document.createElement("article");
+
+    card.className="card";
+
+
+    const saved=
+    favorites.includes(item.id);
+
+
+    const image=
+    `https://loremflickr.com/1000/750/${item.query}?lock=${item.id}`;
+
+
+    card.innerHTML=`
+
+<div class="card-image">
+
+<img
+src="${image}"
+loading="lazy"
+alt="${item.title}"
+onerror="
+this.src='https://picsum.photos/1000/750?random=${item.id}'
+">
+
+
+<div class="tag">
+
+${categories[item.category].icon}
+
+${item.category}
+
+</div>
+
+
+<button
+class="fav ${saved?"active":""}"
+onclick="
+toggleFavorite(${item.id},event)
+">
+
+${saved?"♥":"♡"}
+
+</button>
+
+</div>
+
+
+<div class="card-body">
+
+
+<div class="card-top">
+
+<h3>
+${item.title}
+</h3>
+
+<span class="uses">
+${item.uses.toLocaleString()} uses
+</span>
+
+</div>
+
+
+<div class="description">
+
+${item.prompt}
+
+</div>
+
+
+<div class="actions">
+
+<button
+class="action primary"
+onclick="
+copyPrompt(${item.id})
+">
+
+📋 Copy
+
+</button>
+
+
+<button
+class="action"
+onclick="
+openPrompt(${item.id})
+">
+
+View →
+
+</button>
+
+</div>
+
+
+</div>
+`;
+
+    return card;
+}
+
+
+/* =====================================================
+RENDER
+===================================================== */
+
+function render(){
+
+    const grid=
+    document.getElementById(
+        "promptGrid"
+    );
+
+    const empty=
+    document.getElementById(
+        "empty"
+    );
+
+    const load=
+    document.getElementById(
+        "loadMore"
+    );
+
+
+    const list=
+    getResults();
+
+
+    grid.innerHTML="";
+
+
+    if(!list.length){
+
+        empty.style.display=
+            "block";
+
+        load.style.display=
+            "none";
+
+        document.getElementById(
+            "resultInfo"
+        ).textContent=
+            "No prompts found.";
+
+        return;
+    }
+
+
+    empty.style.display=
+        "none";
+
+
+    list
+    .slice(0,visible)
+    .forEach(
+        (item,index)=>{
+            grid.appendChild(
+                createCard(
+                    item,
+                    index
+                )
+            );
+        }
+    );
+
+
+    document.getElementById(
+        "resultInfo"
+    ).textContent=
+    `${list.length.toLocaleString()} prompts found`;
+
+
+    load.style.display=
+        visible<list.length
+        ?"block"
+        :"none";
+}
+
+
+/* =====================================================
+SEARCH
+===================================================== */
+
+function runSearch(){
+
+    currentSearch=
+    document.getElementById(
+        "searchInput"
+    ).value.trim();
+
+    visible=32;
+
+    render();
+}
+
+
+document
+.getElementById("searchInput")
+.addEventListener(
+    "input",
+    runSearch
+);
+
+
+document
+.getElementById("searchInput")
+.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.key==="Enter")
+            runSearch();
+
+        if(e.key==="Escape"){
+
+            e.target.value="";
+            currentSearch="";
+
+            render();
+        }
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        if(
+            e.key==="/" &&
+            document.activeElement.tagName
+            !=="INPUT"
+        ){
+
+            e.preventDefault();
+
+            document
+            .getElementById(
+                "searchInput"
+            )
+            .focus();
+        }
+
+        if(e.key==="Escape"){
+
+            closePrompt();
+            closeAuth();
+        }
+    }
+);
+
+
+/* =====================================================
+LOAD MORE
+===================================================== */
+
+function loadMore(){
+
+    visible+=32;
+
+    render();
+}
+
+
+/* =====================================================
+COPY
+===================================================== */
+
+function copyPrompt(id){
+
+    const item=
+    prompts.find(
+        x=>x.id===id
+    );
+
+    navigator.clipboard
+    .writeText(item.prompt)
+    .then(
+        ()=>toast(
+            "✓ Prompt copied!"
+        )
+    );
+}
+
+
+/* =====================================================
+FAVORITES
+===================================================== */
+
+function toggleFavorite(
+    id,
+    event
+){
+
+    event.stopPropagation();
+
+
+    if(
+        favorites.includes(id)
+    ){
+
+        favorites=
+        favorites.filter(
+            x=>x!==id
+        );
+
+        toast(
+            "Removed from favorites"
+        );
+
+    }else{
+
+        favorites.push(id);
+
+        toast(
+            "♥ Saved to favorites"
+        );
+    }
+
+
+    localStorage.setItem(
+        "pfFavorites",
+        JSON.stringify(
+            favorites
+        )
+    );
+
+
+    render();
+}
+
+
+function showFavorites(){
+
+    currentCategory="All";
+    currentSearch="";
+
+    document.getElementById(
+        "searchInput"
+    ).value="";
+
+
+    const grid=
+    document.getElementById(
+        "promptGrid"
+    );
+
+    const empty=
+    document.getElementById(
+        "empty"
+    );
+
+    const load=
+    document.getElementById(
+        "loadMore"
+    );
+
+
+    const list=
+    prompts.filter(
+        x=>
+        favorites.includes(
+            x.id
+        )
+    );
+
+
+    grid.innerHTML="";
+
+
+    if(!list.length){
+
+        empty.style.display=
+            "block";
+
+        load.style.display=
+            "none";
+
+        document.getElementById(
+            "resultInfo"
+        ).textContent=
+            "No saved prompts yet.";
+
+        return;
+    }
+
+
+    empty.style.display=
+        "none";
+
+
+    list.forEach(
+        (item,index)=>{
+            grid.appendChild(
+                createCard(
+                    item,
+                    index
+                )
+            );
+        }
+    );
+
+
+    load.style.display=
+        "none";
+
+
+    document.getElementById(
+        "resultInfo"
+    ).textContent=
+        `${list.length} saved prompts`;
+
+
+    document
+    .getElementById("explore")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+
+/* =====================================================
+PROMPT MODAL
+===================================================== */
+
+function openPrompt(id){
+
+    currentPrompt=
+    prompts.find(
+        x=>x.id===id
+    );
+
+
+    const image=
+    `https://loremflickr.com/1200/800/${currentPrompt.query}?lock=${currentPrompt.id}`;
+
+
+    document.getElementById(
+        "modalImage"
+    ).src=image;
+
+
+    document.getElementById(
+        "modalCategory"
+    ).textContent=
+    `${categories[currentPrompt.category].icon}
+    ${currentPrompt.category}`;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent=
+        currentPrompt.title;
+
+
+    document.getElementById(
+        "modalText"
+    ).textContent=
+        currentPrompt.prompt;
+
+
+    document.getElementById(
+        "promptModal"
+    ).classList.add(
+        "show"
+    );
+}
+
+
+function closePrompt(){
+
+    document
+    .getElementById(
+        "promptModal"
+    )
+    .classList.remove(
+        "show"
+    );
+}
+
+
+function copyCurrent(){
+
+    if(!currentPrompt)
+        return;
+
+    navigator.clipboard
+    .writeText(
+        currentPrompt.prompt
+    );
+
+    toast(
+        "✓ Prompt copied!"
+    );
+}
+
+
+function downloadCurrent(){
+
+    if(!currentPrompt)
+        return;
+
+
+    const blob=
+    new Blob(
+        [currentPrompt.prompt],
+        {
+            type:
+            "text/plain"
+        }
+    );
+
+
+    const url=
+    URL.createObjectURL(
+        blob
+    );
+
+
+    const a=
+    document.createElement(
+        "a"
+    );
+
+    a.href=url;
+
+    a.download=
+        "promptforge-prompt.txt";
+
+    a.click();
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    toast(
+        "✓ Prompt downloaded!"
+    );
+}
+
+
+/* =====================================================
+AUTH
+===================================================== */
+
+function openAuth(){
+
+    document
+    .getElementById(
+        "authOverlay"
+    )
+    .classList.add(
+        "show"
+    );
+}
+
+
+function closeAuth(){
+
+    document
+    .getElementById(
+        "authOverlay"
+    )
+    .classList.remove(
+        "show"
+    );
+}
+
+
+function switchAuth(type){
+
+    document
+    .querySelectorAll(
+        ".auth-tab"
+    )
+    .forEach(
+        x=>
+        x.classList.remove(
+            "active"
+        )
+    );
+
+
+    document
+    .querySelectorAll(
+        ".auth-form"
+    )
+    .forEach(
+        x=>
+        x.classList.remove(
+            "active"
+        )
+    );
+
+
+    if(type==="login"){
+
+        document
+        .querySelectorAll(
+            ".auth-tab"
+        )[0]
+        .classList.add(
+            "active"
+        );
+
+        document
+        .getElementById(
+            "loginForm"
+        )
+        .classList.add(
+            "active"
+        );
+
+    }else{
+
+        document
+        .querySelectorAll(
+            ".auth-tab"
+        )[1]
+        .classList.add(
+            "active"
+        );
+
+        document
+        .getElementById(
+            "signupForm"
+        )
+        .classList.add(
+            "active"
+        );
+    }
+}
+
+
+/* =====================================================
+DEMO SIGNUP
+===================================================== */
+
+function signup(e){
+
+    e.preventDefault();
+
+
+    const name=
+    document.getElementById(
+        "signupName"
+    ).value;
+
+
+    const email=
+    document.getElementById(
+        "signupEmail"
+    ).value;
+
+
+    localStorage.setItem(
+        "pfUser",
+        JSON.stringify({
+            name,
+            email
+        })
+    );
+
+
+    closeAuth();
+
+    updateUserUI();
+
+    toast(
+        "✓ Account created!"
+    );
+}
+
+
+/* =====================================================
+DEMO LOGIN
+===================================================== */
+
+function login(e){
+
+    e.preventDefault();
+
+
+    const email=
+    document.getElementById(
+        "loginEmail"
+    ).value;
+
+
+    const name=
+    email.split("@")[0];
+
+
+    localStorage.setItem(
+        "pfUser",
+        JSON.stringify({
+            name,
+            email
+        })
+    );
+
+
+    closeAuth();
+
+    updateUserUI();
+
+    toast(
+        "✓ Welcome back!"
+    );
+}
+
+
+/* =====================================================
+GOOGLE DEMO
+===================================================== */
+
+function demoGoogleLogin(){
+
+    const user={
+        name:"Google User",
+        email:"google@example.com"
+    };
+
+
+    localStorage.setItem(
+        "pfUser",
+        JSON.stringify(
+            user
+        )
+    );
+
+
+    closeAuth();
+
+    updateUserUI();
+
+    toast(
+        "✓ Demo Google login successful"
+    );
+}
+
+
+/* =====================================================
+USER UI
+===================================================== */
+
+function updateUserUI(){
+
+    const user=
+    JSON.parse(
+        localStorage.getItem(
+            "pfUser"
+        )
+    );
+
+
+    const loginButton=
+    document.getElementById(
+        "loginButton"
+    );
+
+    const avatar=
+    document.getElementById(
+        "avatarButton"
+    );
+
+
+    if(user){
+
+        loginButton.style.display=
+            "none";
+
+        avatar.style.display=
+            "grid";
+
+
+        avatar.textContent=
+        user.name
+        .charAt(0)
+        .toUpperCase();
+
+
+        document.getElementById(
+            "profileName"
+        ).textContent=
+            user.name;
+
+
+        document.getElementById(
+            "profileEmail"
+        ).textContent=
+            user.email;
+
+    }else{
+
+        loginButton.style.display=
+            "block";
+
+        avatar.style.display=
+            "none";
+    }
+}
+
+
+function toggleProfile(){
+
+    document
+    .getElementById(
+        "profileMenu"
+    )
+    .classList.toggle(
+        "show"
+    );
+}
+
+
+function logout(){
+
+    localStorage.removeItem(
+        "pfUser"
+    );
+
+    document
+    .getElementById(
+        "profileMenu"
+    )
+    .classList.remove(
+        "show"
+    );
+
+    updateUserUI();
+
+    toast(
+        "Logged out"
+    );
+}
+
+
+/* =====================================================
+THEME
+===================================================== */
+
+function toggleTheme(){
+
+    document.body
+    .classList
+    .toggle("light");
+
+
+    const light=
+    document.body
+    .classList
+    .contains(
+        "light"
+    );
+
+
+    localStorage.setItem(
+        "pfTheme",
+        light
+        ?"light"
+        :"dark"
+    );
+
+
+    document.getElementById(
+        "themeBtn"
+    ).textContent=
+        light
+        ?"🌙"
+        :"☀️";
+}
+
+
+if(
+    localStorage.getItem(
+        "pfTheme"
+    )==="light"
+){
+
+    document.body
+    .classList
+    .add("light");
+
+    document.getElementById(
+        "themeBtn"
+    ).textContent="🌙";
+}
+
+
+/* =====================================================
+TOAST
+===================================================== */
+
+let toastTimer;
+
+function toast(message){
+
+    const box=
+    document.getElementById(
+        "toast"
+    );
+
+
+    box.textContent=
+        message;
+
+
+    box.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer=
+    setTimeout(
+        ()=>{
+            box.classList.remove(
+                "show"
+            );
+        },
+        2000
+    );
+}
+
+
+/* =====================================================
+CLOSE OVERLAYS
+===================================================== */
+
+document
+.getElementById(
+    "authOverlay"
+)
+.addEventListener(
+    "click",
+    e=>{
+
+        if(
+            e.target.id===
+            "authOverlay"
+        ){
+            closeAuth();
+        }
+
+    }
+);
+
+
+document
+.getElementById(
+    "promptModal"
+)
+.addEventListener(
+    "click",
+    e=>{
+
+        if(
+            e.target.id===
+            "promptModal"
+        ){
+            closePrompt();
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   AI PROMPT GENERATOR
+   ===================================================== */
+let generatedPromptText="";
+
+function fillGeneratorSelect(id,items){
+    const el=document.getElementById(id);
+    el.innerHTML=items.map(x=>`<option value="${String(x).replaceAll('"','&quot;')}">${x}</option>`).join('');
+}
+
+function updateGeneratorOptions(){
+    const category=document.getElementById("genCategory").value;
+    const data=categories[category];
+    if(!data)return;
+    fillGeneratorSelect("genSubject",data.subjects);
+    fillGeneratorSelect("genStyle",data.styles);
+    fillGeneratorSelect("genPlace",data.places);
+}
+
+function initGenerator(){
+    fillGeneratorSelect("genCategory",Object.keys(categories));
+    updateGeneratorOptions();
+}
+
+function openGenerator(){
+    document.getElementById("generatorOverlay").classList.add("show");
+    initGenerator();
+}
+function closeGenerator(){
+    document.getElementById("generatorOverlay").classList.remove("show");
+}
+
+function generateCustomPrompt(){
+    const subject=document.getElementById("genSubject").value;
+    const style=document.getElementById("genStyle").value;
+    const place=document.getElementById("genPlace").value;
+    const camera=document.getElementById("genCamera").value;
+    const ratio=document.getElementById("genRatio").value;
+    const mood=document.getElementById("genMood").value;
+    const detail=document.getElementById("genDetail").value;
+    const custom=document.getElementById("genCustom").value.trim();
+    generatedPromptText=`Transform my uploaded reference photo into ${subject}.
+
+Preserve the person's recognizable identity, natural facial structure, facial proportions, hairstyle and overall likeness from the reference image.
+
+Place the subject in ${place} with ${style}. Create a ${mood} atmosphere and a polished professional composition.
+
+Camera: ${camera}. Aspect ratio: ${ratio}. ${detail}. Realistic skin texture, natural facial details, accurate lighting, realistic depth of field, cinematic composition, premium color grading and professional photography quality.
+
+${custom ? "Custom instruction: "+custom+"\n\n" : ""}Make the result look like a real professional photoshoot rather than a low-quality artificial image. Sharp focus, realistic textures, refined details, cinematic atmosphere, high resolution.`;
+    document.getElementById("generatorResult").textContent=generatedPromptText;
+    document.getElementById("generatorOutput").classList.add("show");
+}
+
+function randomizeGenerator(){
+    const names=Object.keys(categories);
+    const category=names[Math.floor(Math.random()*names.length)];
+    document.getElementById("genCategory").value=category;
+    updateGeneratorOptions();
+    ["genSubject","genStyle","genPlace","genCamera","genRatio","genMood","genDetail"].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el.options.length)el.selectedIndex=Math.floor(Math.random()*el.options.length);
+    });
+    generateCustomPrompt();
+}
+
+function resetGenerator(){
+    document.getElementById("genCategory").selectedIndex=0;
+    updateGeneratorOptions();
+    ["genCamera","genRatio","genMood","genDetail"].forEach(id=>document.getElementById(id).selectedIndex=0);
+    document.getElementById("genCustom").value="";
+    document.getElementById("generatorOutput").classList.remove("show");
+    generatedPromptText="";
+}
+
+function copyGeneratedPrompt(){
+    if(!generatedPromptText)return;
+    navigator.clipboard.writeText(generatedPromptText).then(()=>toast("✓ Generated prompt copied!"));
+}
+
+function saveGeneratedPrompt(){
+    if(!generatedPromptText)return;
+    const saved=JSON.parse(localStorage.getItem("pfGeneratedPrompts")||"[]");
+    saved.unshift({text:generatedPromptText,date:new Date().toISOString()});
+    localStorage.setItem("pfGeneratedPrompts",JSON.stringify(saved.slice(0,50)));
+    toast("♥ Generated prompt saved!");
+}
+
+function downloadGeneratedPrompt(){
+    if(!generatedPromptText)return;
+    const blob=new Blob([generatedPromptText],{type:"text/plain"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download="promptforge-generated-prompt.txt";a.click();
+    URL.revokeObjectURL(url);
+    toast("✓ Generated prompt downloaded!");
+}
+
+document.getElementById("generatorOverlay").addEventListener("click",e=>{
+    if(e.target.id==="generatorOverlay")closeGenerator();
+});
+
+
+/* =====================================================
+START
+===================================================== */
+
+
+
+/* ===== AI IMAGE GENERATOR ADD-ON JS ===== */
+let imageGenPreviewUrl = '';
+let imageGenResultUrl = '';
+function openImageGenerator(){ document.getElementById('imageGenOverlay').classList.add('show'); }
+function closeImageGenerator(){ document.getElementById('imageGenOverlay').classList.remove('show'); }
+function previewImageGenPhoto(event){
+  const file=event.target.files && event.target.files[0];
+  const img=document.getElementById('imageGenPhotoPreview');
+  if(!file){ img.style.display='none'; return; }
+  if(imageGenPreviewUrl) URL.revokeObjectURL(imageGenPreviewUrl);
+  imageGenPreviewUrl=URL.createObjectURL(file);
+  img.src=imageGenPreviewUrl; img.style.display='block';
+}
+async function generateImageGen(){
+  const file=document.getElementById('imageGenPhoto').files[0];
+  const prompt=document.getElementById('imageGenPrompt').value.trim();
+  const style=document.getElementById('imageGenStyle').value;
+  const ratio=document.getElementById('imageGenRatio').value;
+  const result=document.getElementById('imageGenResult');
+  const downloadBtn=document.getElementById('imageGenDownload');
+
+  if(!file){ result.innerHTML='📷 Please upload a photo first.'; return; }
+  if(!prompt){ result.innerHTML='✍️ Please enter a prompt first.'; return; }
+
+  result.innerHTML='<div style="padding:25px">⏳ Generating your image...<br><small>Style: '+style+' · Ratio: '+ratio+'</small></div>';
+  downloadBtn.style.display='none';
+
+  try{
+    const formData=new FormData();
+    formData.append('image',file);
+    formData.append('prompt',prompt);
+    formData.append('style',style);
+    formData.append('ratio',ratio);
+
+    const response=await fetch('/api/generate',{
+      method:'POST',
+      body:formData
+    });
+
+    const data=await response.json();
+
+    if(!response.ok) throw new Error(data.error || 'Image generation failed.');
+
+    imageGenResultUrl=data.image;
+    result.innerHTML='<img src="'+data.image+'" alt="Generated AI image">';
+    downloadBtn.style.display='inline-block';
+  }catch(error){
+    console.error(error);
+    result.innerHTML='<div style="padding:20px;color:#ff6685">❌ '+(error.message || 'Something went wrong. Please try again.')+'</div>';
+  }
+}
+function resetImageGenerator(){
+  const f=document.getElementById('imageGenPhoto'); const p=document.getElementById('imageGenPhotoPreview');
+  document.getElementById('imageGenPrompt').value='';
+  f.value=''; p.removeAttribute('src'); p.style.display='none';
+  document.getElementById('imageGenResult').textContent='Upload a photo and enter a prompt to get started.';
+  document.getElementById('imageGenDownload').style.display='none';
+}
+function downloadImageGen(){
+  if(!imageGenResultUrl) return;
+  const a=document.createElement('a'); a.href=imageGenResultUrl; a.download='promptforge-ai-image.png'; a.click();
+}
+document.addEventListener('click',function(e){
+  const overlay=document.getElementById('imageGenOverlay');
+  if(e.target===overlay) closeImageGenerator();
+});
+
+createCategories();
+
+updateUserUI();
+
+render();
+
+</script>
+
+</body>
+</html>
