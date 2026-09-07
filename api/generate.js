@@ -1,6 +1,8 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
@@ -12,54 +14,43 @@ export default async function handler(req, res) {
       });
     }
 
+    if (!image) {
+      return res.status(400).json({
+        error: "Image is required"
+      });
+    }
+
+    const match = image.match(/^data:(.+);base64,(.+)$/);
+
+    if (!match) {
+      return res.status(400).json({
+        error: "Invalid image format"
+      });
+    }
+
+    const mimeType = match[1];
+    const base64Data = match[2];
+
+    const buffer = Buffer.from(base64Data, "base64");
+
+    const blob = new Blob([buffer], {
+      type: mimeType
+    });
+
     const form = new FormData();
 
     form.append("model", "gpt-image-2");
     form.append("prompt", prompt);
+    form.append("image[]", blob, "reference-image.png");
     form.append("size", "1024x1024");
-
-    // Optional reference image
-    if (image) {
-      const match = image.match(
-        /^data:(.+);base64,(.+)$/
-      );
-
-      if (!match) {
-        return res.status(400).json({
-          error: "Invalid image format"
-        });
-      }
-
-      const mimeType = match[1];
-      const base64Data = match[2];
-
-      const buffer = Buffer.from(
-        base64Data,
-        "base64"
-      );
-
-      const blob = new Blob(
-        [buffer],
-        { type: mimeType }
-      );
-
-      form.append(
-        "image[]",
-        blob,
-        "reference-image.png"
-      );
-    }
 
     const response = await fetch(
       "https://api.openai.com/v1/images/edits",
       {
         method: "POST",
-
         headers: {
-          Authorization:
-            `Bearer ${process.env.OPENAI_API_KEY}`
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
         },
-
         body: form
       }
     );
@@ -73,7 +64,6 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
 
   } catch (error) {
-
     console.error(error);
 
     return res.status(500).json({
